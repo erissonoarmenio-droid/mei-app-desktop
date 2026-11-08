@@ -82,6 +82,14 @@ export const useAudioTask = () => {
 
     const { audioBase64, displayText, expressions, forwarded } = options;
 
+    // Mei: se a voz falhou (sem audio), ainda aplica as tags de emocao/movimento
+    if (!audioBase64 && expressions?.length) {
+      const lappAdapterSilent = (window as any).getLAppAdapter?.();
+      if (lappAdapterSilent) {
+        expressions.forEach((exp: string | number) => setExpression(exp, lappAdapterSilent));
+      }
+    }
+
     // Update display text
     if (displayText) {
       appendText(displayText.text);

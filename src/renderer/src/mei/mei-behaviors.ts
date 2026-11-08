@@ -78,15 +78,7 @@ export async function meiAcao(acao: string) {
   if (!b || !m) return;
   const atual = [m[12], m[13], (Math.atan2(m[1], m[0]) * 180) / Math.PI];
   switch (acao) {
-    case 'sentar':
-      estado.pose = 'sentada';
-      await animar(atual, [b.x, b.y - 0.55 * b.s, 0], 900, (v) => montar(v[0], v[1], v[2]));
-      break;
-    case 'deitar':
-      estado.pose = 'deitada';
-      await animar(atual, [b.x, b.y - 0.75 * b.s, 85], 1400, (v) => montar(v[0], v[1], v[2]));
-      expressao('sad');
-      break;
+    // sentar/deitar removidos a pedido do Eri (ficou feio sem poses reais no modelo)
     case 'levantar':
       if (estado.pose === 'em_pe') return;
       estado.pose = 'em_pe';
@@ -151,7 +143,7 @@ export function useMeiBehaviors() {
   useEffect(() => {
     if (aiState !== AiStateEnum.IDLE) {
       ultimaAtividade.current = Date.now();
-      if (fase.current > 0) { fase.current = 0; meiAcao('levantar'); }
+      if (fase.current > 0) { fase.current = 0; }
     }
   }, [aiState]);
   useEffect(() => {
@@ -159,11 +151,11 @@ export function useMeiBehaviors() {
       if (aiRef.current !== AiStateEnum.IDLE || estado.andando) return;
       const min = (Date.now() - ultimaAtividade.current) / 60000;
       if (fase.current === 0 && min >= CFG.tedioSentarMin) {
-        fase.current = 1; meiAcao('sentar');
-        falarEvento(`o Eri está quieto há ${Math.round(min)} minutos. Você sentou de tédio. Fale algo curto e marrento sobre estar entediada.`);
+        fase.current = 1; expressao('pout');
+        falarEvento(`o Eri está quieto há ${Math.round(min)} minutos. Você está entediada. Fale algo curto e marrento sobre estar entediada.`);
         ultimaAtividade.current = Date.now() - CFG.tedioSentarMin * 60000; // a propria fala nao reinicia o relogio do tedio
       } else if (fase.current === 1 && min >= CFG.tedioDeitarMin) {
-        fase.current = 2; meiAcao('deitar');
+        fase.current = 2; expressao('sad'); // so cara de sono, sem falar (economiza)
       }
     }, 5000);
     return () => clearInterval(id);
