@@ -184,6 +184,23 @@ export function useMeiBehaviors() {
     return () => clearTimeout(t);
   }, [mode]);
 
+  // 5) danca uns segundos quando comeca uma musica (tocada por ela ou pelo Eri)
+  useEffect(() => {
+    const ipc = (window as any).electron?.ipcRenderer;
+    if (!ipc) return undefined;
+    let ultimaDanca = 0;
+    const onMusica = async () => {
+      if (Date.now() - ultimaDanca < 20000) return; // no maximo uma danca a cada 20 s
+      ultimaDanca = Date.now();
+      if (estado.pose !== 'em_pe') await meiAcao('levantar');
+      expressao('excited');
+      motion('Dance');
+      setTimeout(() => motion('Idle'), 7000);
+    };
+    ipc.on('mei-musica', onMusica);
+    return () => ipc.removeListener?.('mei-musica', onMusica);
+  }, []);
+
   // acesso pelo console para testes: meiAcao('sentar')
   useEffect(() => { (window as any).meiAcao = meiAcao; }, []);
 }

@@ -4,6 +4,7 @@ import { electronApp, optimizer } from "@electron-toolkit/utils";
 import { WindowManager } from "./window-manager";
 import { MenuManager } from "./menu-manager";
 
+import { startMeiMediaWatcher, stopMeiMediaWatcher } from "./mei-media-watcher";
 let windowManager: WindowManager;
 let menuManager: MenuManager;
 let isQuitting = false;
@@ -87,6 +88,7 @@ app.whenReady().then(() => {
     },
   });
   menuManager.createTray();
+  startMeiMediaWatcher(() => windowManager.getWindow());
 
   window.on("close", (event) => {
     if (!isQuitting) {
@@ -140,6 +142,7 @@ app.on("window-all-closed", () => {
 });
 
 app.on("before-quit", () => {
+  stopMeiMediaWatcher();
   isQuitting = true;
   menuManager.destroy();
   globalShortcut.unregisterAll();
