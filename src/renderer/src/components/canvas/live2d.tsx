@@ -12,6 +12,7 @@ import { useAiState, AiStateEnum } from "@/context/ai-state-context";
 import { useLive2DExpression } from "@/hooks/canvas/use-live2d-expression";
 import { useForceIgnoreMouse } from "@/hooks/utils/use-force-ignore-mouse";
 import { useMode } from "@/context/mode-context";
+import { useMeiBehaviors } from "@/mei/mei-behaviors";
 
 interface Live2DProps {
   showSidebar?: boolean;
@@ -44,6 +45,7 @@ export const Live2D = memo(
     useIpcHandlers();
     useInterrupt();
     useAudioTask();
+    useMeiBehaviors();
 
     // Reset expression to default when AI state becomes idle
     useEffect(() => {

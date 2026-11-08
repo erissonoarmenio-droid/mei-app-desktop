@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { ModelInfo } from '@/context/live2d-config-context';
+import { meiAcao } from '@/mei/mei-behaviors';
 
 /**
  * Custom hook for handling Live2D model expressions
@@ -17,7 +18,13 @@ export const useLive2DExpression = () => {
     logMessage?: string,
   ) => {
     try {
-      if (typeof expressionValue === 'string') {
+      if (typeof expressionValue === 'string' && expressionValue.startsWith('motion:')) {
+        // Mei: tag de movimento, ex. "motion:Dance"
+        lappAdapter.getModel()?.startRandomMotion(expressionValue.slice(7), 3);
+      } else if (typeof expressionValue === 'string' && expressionValue.startsWith('acao:')) {
+        // Mei: acao de corpo, ex. "acao:sentar"
+        meiAcao(expressionValue.slice(5));
+      } else if (typeof expressionValue === 'string') {
         // Set expression by name
         lappAdapter.setExpression(expressionValue);
       } else if (typeof expressionValue === 'number') {

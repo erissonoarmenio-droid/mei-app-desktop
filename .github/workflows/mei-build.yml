@@ -1,0 +1,42 @@
+name: Mei - instalador Windows
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'package.json'
+      - 'electron-builder.yml'
+      - '.github/workflows/mei-build.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Compilar
+        run: npx electron-vite build
+
+      - name: Gerar instalador .exe
+        run: npx electron-builder --win --publish never --config electron-builder.yml
+
+      - name: Publicar versao (Releases)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: mei-v${{ github.run_number }}
+          name: Mei app desktop v${{ github.run_number }}
+          body: Instalador do app da Mei (corpo vivo). Baixe o .exe abaixo e instale por cima do anterior.
+          files: release/**/*-setup.exe

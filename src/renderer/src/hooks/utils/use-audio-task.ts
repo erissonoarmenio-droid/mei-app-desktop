@@ -127,12 +127,11 @@ export const useAudioTask = () => {
 
         // Set expression if available
         const lappAdapter = (window as any).getLAppAdapter?.();
-        if (lappAdapter && expressions?.[0] !== undefined) {
-          setExpression(
-            expressions[0],
-            lappAdapter,
-            `Set expression to: ${expressions[0]}`,
-          );
+        if (lappAdapter && expressions?.length) {
+          // Mei: aplica todas as tags (ex.: [joy] [dance]), nao so a primeira
+          expressions.forEach((exp: string | number) => {
+            setExpression(exp, lappAdapter, `Set expression to: ${exp}`);
+          });
         }
 
         // Start talk motion

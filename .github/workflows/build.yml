@@ -6,17 +6,7 @@ permissions:
   id-token: write
 
 on:
-  workflow_dispatch:
-  push:
-    branches:
-      - main
-    paths-ignore:
-      - '**.md'
-      - '**.spec.js'
-      - '.idea'
-      - '.gitignore'
-      - '.github/**'
-      - '!.github/workflows/release.yml'
+  workflow_dispatch: # Mei: desligado no push; o instalador da Mei sai pelo mei-build.yml
 
 concurrency:
   group: release-${{ github.ref }}
